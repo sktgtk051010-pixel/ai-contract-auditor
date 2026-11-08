@@ -1,0 +1,6 @@
+# 运行本工具本身不需要第三方库，只用 Python 标准库。
+# Slither 单独安装：
+#   pip install slither-analyzer
+# 它依赖 solc；Foundry 项目可以用：
+#   pip install slither-analyzer
+#   slither . --compile-force-framework foundry

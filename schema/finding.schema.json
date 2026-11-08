@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Finding",
+  "description": "One risk hypothesis produced by the LLM stage, pending human review.",
+  "type": "object",
+  "required": [
+    "unit_id",
+    "file",
+    "function",
+    "risk_hypothesis",
+    "code_evidence",
+    "preconditions",
+    "verification_suggestion",
+    "severity_guess",
+    "confidence",
+    "status"
+  ],
+  "properties": {
+    "unit_id": { "type": "string" },
+    "file": { "type": "string" },
+    "function": { "type": "string" },
+    "risk_hypothesis": { "type": "string" },
+    "code_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["lines", "reason"],
+        "properties": {
+          "lines": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "preconditions": { "type": "array", "items": { "type": "string" } },
+    "verification_suggestion": { "type": "string" },
+    "severity_guess": { "enum": ["High", "Medium", "Low", "Info", ""] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "status": {
+      "enum": ["tool_alert", "unconfirmed", "confirmed", "false_positive", "unverifiable"],
+      "description": "tool_alert = static analyzer only; unconfirmed = LLM hypothesis not yet reviewed; confirmed = validated by code review or test; false_positive = refuted; unverifiable = evidence insufficient."
+    }
+  }
+}

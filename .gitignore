@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+build/
+slither_raw.json
+review/review.md
+eval/eval_result.md
