@@ -81,4 +81,10 @@ prompts/    提示词模板
 schema/     finding 的 JSON schema
 review/     人工裁决模板
 eval/       案例表与指标计算
+docs/       学习文档
 ```
+
+## 文档
+
+- `docs/PYTHON-101.md`：Python 语法速成，全部对照 C
+- `docs/WALKTHROUGH.md`：每个脚本在干什么、你要执行什么、怎么核对结果
