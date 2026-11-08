@@ -80,6 +80,7 @@ print(f"scanning {name}")         # 输出：scanning vault
 items = []                 # 空列表
 items.append("a")          # 尾部加一个
 items.append("b")
+
 print(items)               # ['a', 'b']
 print(len(items))          # 2
 print(items[0])            # 'a'，下标从 0 开始
@@ -94,6 +95,57 @@ for item in items:         # 相当于 for (i=0; i<n; i++) 访问 items[i]
     print(item)
 ```
 
+`item` 不是提前定义的 —— 是 for 这一行自己定义的，跟 C 里 `for (int i = 0; ...)` 的 `int i` 一样。
+
+具体过程：
+
+```python
+items = ["a", "b", "c"]
+for item in items:
+    print(item)
+```
+
+输出三行 `a` / `b` / `c`，因为每一轮 item 被赋成下一个元素：
+
+| 轮次 | item 的值 | print(item) 输出 |
+|---|---|---|
+| 1 | "a" | a |
+| 2 | "b" | b |
+| 3 | "c" | c |
+
+取完自动结束，不用写边界判断，也不用写自增。
+
+写成 C：
+
+```c
+char *items[3] = {"a", "b", "c"};
+for (int i = 0; i < 3; i++) {
+    char *item = items[i];      // Python 的 for 自动做了这一行
+    printf("%s\n", item);
+}
+```
+
+**关键区别：Python 的 for 拿到的是元素，不是下标。**
+
+```python
+for i in items:
+    print(i)      # 打印 "a"、"b"、"c"，不是 0、1、2
+```
+
+变量名随便起，拿到的永远是元素本身。要下标就用：
+
+```python
+for i, item in enumerate(items):
+    print(i, item)      # 0 a / 1 b / 2 c
+```
+
+`print(item)` 只打印当前一个元素，`print(items)` 才是打印整个列表：
+
+```python
+print(items)    # ['a', 'b', 'c']
+print(item)     # a
+```
+
 ---
 
 ## 5. 字典 dict ≈ 用字符串当索引的数组
@@ -103,6 +155,7 @@ person = {"name": "alice", "age": 20}
 print(person["name"])      # alice
 person["age"] = 21         # 修改
 person["city"] = "changsha"  # 新增
+
 ```
 
 C 里没有现成的键值容器，要自己写哈希表。Python 内置。
