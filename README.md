@@ -24,7 +24,7 @@ Solidity 源码
 
 ## 快速开始
 
-样本用 `D:\Solidity-Projects\staking`（**只读，不改它**）。
+样本为独立的 staking 仓库（本工具只读取源码，不修改样本）。
 
 ```powershell
 # 1. 结构扫描
@@ -118,12 +118,13 @@ slither . --json slither_raw.json
 src/        扫描、转换、合并、分析
 prompts/    提示词模板
 schema/     finding 的 JSON schema
-review/     人工裁决模板
+review/     人工裁决记录
 eval/       案例表与指标计算
-docs/       学习文档
+evidence/   复核用的 Foundry 测试
 ```
 
-## 文档
+## 关键产出
 
-- `docs/PYTHON-101.md`：Python 语法速成，全部对照 C
-- `docs/WALKTHROUGH.md`：每个脚本在干什么、你要执行什么、怎么核对结果
+- `review/review.md`：14 条假设的逐条裁决、统计与复核方法
+- `eval/eval_result.md`：基线 vs 引入 LLM 的检出对比
+- `evidence/`：复核用的 Foundry 测试，含实测误差数据
