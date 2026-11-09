@@ -71,6 +71,7 @@ slither . --json slither_raw.json
 | 人工复核成立 | 6 条 |
 | 误报 | 8 条 |
 | 全量精确率 | 6 / 14 ≈ 42.9% |
+| Foundry 复核测试 | 1 个，跑通（`evidence/AuditF005PrecisionBound.t.sol`），实测截断误差 556 wei |
 | 基线（Slither）检出 | 1 / 5 个已知问题（20%） |
 | LLM 累计检出 | 3 / 5（60%） |
 | LLM 新增 | 2 / 5（owner 增发、段数增长） |
