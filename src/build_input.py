@@ -50,8 +50,14 @@ def assign_alerts(alerts, files_index):
     """
     assigned = {}
     unassigned = []
+    # scan 记的是相对扫描目录的路径（TimeBoostStaking.sol），
+    # Slither 记的是相对项目根目录的路径（src/TimeBoostStaking.sol）。
+    # 两边对不上时按文件名兜底匹配，并把 key 归一到 scan 的写法。
+    by_name = {Path(p).name: p for p in files_index}
     for alert in alerts:
         rel = alert["file"]
+        if rel not in files_index:
+            rel = by_name.get(Path(rel).name, rel)
         lines = alert.get("lines") or []
         entry = files_index.get(rel)       # 这个文件扫描过没有
         if not entry or not lines:

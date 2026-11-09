@@ -1,6 +1,6 @@
 case_id,case_name,source,split,vulnerability_type,slither_detected,llm_flagged,human_confirmed,note
-C-01,divide before multiply on stake,SR-06 TimeBoostStaking L107-112,eval,precision,yes,no,no,llm raised precision but wrong mechanism
+C-01,divide before multiply on stake,SR-06 TimeBoostStaking L109 and L287,eval,precision,yes,yes,yes,F-005 hit with confidence 0.7
 C-02,owner single EOA centralization,SR-05 StakeToken RewardToken TimeBoostStaking,eval,centralization,no,yes,yes,F-003 F-004 hit unlimited mint
-C-03,idle period budget sinking,SR-03 TimeBoostStaking L202 and L342,eval,fund-efficiency,no,no,no,llm missed this
-C-04,unsettled credential transfer loses boost,SR-07 TimeBoostStaking L281,eval,accounting,no,yes,yes,F-002 same mechanism different direction
-C-05,segment count linear growth gas,SR-02 TimeBoostStaking L309-319,eval,gas,no,no,no,llm missed this
+C-03,idle period budget sinking,SR-03 TimeBoostStaking L202 and L342,eval,fund-efficiency,no,no,no,llm missed totalStaked zero case
+C-04,unsettled credential transfer loses boost,SR-07 TimeBoostStaking L281,eval,accounting,no,no,no,F-002 drifted to zero address check
+C-05,segment count linear growth gas,SR-02 TimeBoostStaking L309-319,eval,gas,no,yes,yes,F-014 hit mechanism but pointed at view call

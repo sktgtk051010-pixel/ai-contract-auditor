@@ -67,13 +67,13 @@ ai-contract-auditor/
 | 6 | `run_eval.py` 能算指标 | 输出表头 + `pending cases: C-01...C-05` | ✅ |
 | 7 | 提示词模板改成中文 | dry-run 验证，占位符替换正常 | ✅ |
 | 8 | 两个教学文档 | `docs/PYTHON-101.md`、`docs/WALKTHROUGH.md` | ✅ |
-| 9 | `convert_slither.py` 代码写完 | 但**没跑过真实 Slither 输出**，逻辑未经实战验证 | ⚠️ 未验证 |
+| 9 | `convert_slither.py` 代码写完 | 已用真实 Slither 输出验证（17 条告警归一化成功） | ✅ |
 | 10 | 用 staking 作样本跑通扫描 | `files=4 contracts=4 functions=21 external=15 low_level=0` | ✅ |
-| 11 | 生成分析单元 | `units=15 alerts_assigned=0` | ✅ |
+| 11 | 生成分析单元（含告警挂载） | `units=15 alerts_assigned=14`，3 条命名规范类落空 | ✅ |
 | 12 | DeepSeek 真调全量 15 条 | `findings=15 failed=0` | ✅ |
-| 13 | 人工逐条复核 | `review/review.md`：4 条成立、9 条误报、精确率 30.8% | ✅ |
-| 14 | 评估跑出真实数字 | `eval/eval_result.md`：基线 1/5、LLM 新增 2/5、两边都漏 2 | ✅ |
-| 15 | 修评估脚本的布尔判断 bug | `"no"` 字符串被当成真值，已改成 `is_yes()` | ✅ |
+| 13 | 人工逐条复核 | `review/review.md`：6 条成立、8 条误报、精确率 42.9% | ✅ |
+| 14 | 评估跑出真实数字 | `eval/eval_result.md`：基线 1/5、LLM 累计 3/5、两边都漏 2 | ✅ |
+| 15 | 修两个真实 bug | `"no"` 被当成真值；Slither 路径 `src/x.sol` 与扫描 `x.sol` 对不上 | ✅ |
 
 ---
 
@@ -81,9 +81,9 @@ ai-contract-auditor/
 
 | 步骤 | 状态 | 说明 |
 |---|---|---|
-| 1 装 Slither | ⬜ 未做 | 可选：staking 的报告里已有 17 条 Slither 结果 |
-| 2 生成 Slither JSON | ⬜ 未做 | 同上 |
-| 3 归一化 | ⬜ 未做 | ⚠️ `convert_slither.py` 仍未用真实输出验证过 |
+| 1 装 Slither | ✅ 已装 | WSL 里 Slither 0.11.5（`~/.local/bin/slither`） |
+| 2 生成 Slither JSON | ✅ 已做 | 复制到 `/tmp` 跑，原目录零改动；29 合约 / 17 条告警 |
+| 3 归一化 | ✅ 已做 | `alerts=17 by_impact={'Medium': 4, 'Low': 9, 'Informational': 3, 'Optimization': 1}` |
 | 4 跑流水线 | ✅ 已做 | staking：`units=15` |
 | 5 拿 API key | ✅ 已做 | DeepSeek |
 | 6 真调 | ✅ 已做 | 15 条全部成功 |
