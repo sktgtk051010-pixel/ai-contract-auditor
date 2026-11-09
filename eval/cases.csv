@@ -1,6 +1,6 @@
 case_id,case_name,source,split,vulnerability_type,slither_detected,llm_flagged,human_confirmed,note
-C-01,burn without allowance,vault F-01,eval,access-control,TODO,TODO,TODO,fill after running pipeline
-C-02,setMinter to zero address,vault F-02,eval,input-validation,TODO,TODO,TODO,fill after running pipeline
-C-03,single-sided idle allocation,vault F-08,eval,design,TODO,TODO,TODO,fill after running pipeline
-C-04,reentrancy sample,damn-vulnerable-defi,eval,reentrancy,TODO,TODO,TODO,pick one known case
-C-05,unchecked transfer sample,damn-vulnerable-defi,eval,erc20-handling,TODO,TODO,TODO,pick one known case
+C-01,divide before multiply on stake,SR-06 TimeBoostStaking L107-112,eval,precision,yes,no,no,llm raised precision but wrong mechanism
+C-02,owner single EOA centralization,SR-05 StakeToken RewardToken TimeBoostStaking,eval,centralization,no,yes,yes,F-003 F-004 hit unlimited mint
+C-03,idle period budget sinking,SR-03 TimeBoostStaking L202 and L342,eval,fund-efficiency,no,no,no,llm missed this
+C-04,unsettled credential transfer loses boost,SR-07 TimeBoostStaking L281,eval,accounting,no,yes,yes,F-002 same mechanism different direction
+C-05,segment count linear growth gas,SR-02 TimeBoostStaking L309-319,eval,gas,no,no,no,llm missed this

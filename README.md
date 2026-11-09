@@ -24,25 +24,56 @@ Solidity 源码
 
 ## 快速开始
 
-```bash
-# 1. 只跑结构和告警，不调 LLM
-python run_pipeline.py --target <your-project>/src --slither slither_raw.json
+样本用 `D:\Solidity-Projects\staking`（**只读，不改它**）。
 
-# 2. 看将要发给 LLM 的提示词（不花钱）
-python run_pipeline.py --target <your-project>/src --dry-run
+```powershell
+# 1. 结构扫描
+python src\scan.py --target "D:\Solidity-Projects\staking\src"
 
-# 3. 真调 LLM
-export LLM_API_KEY=sk-xxx          # PowerShell: $env:LLM_API_KEY="sk-xxx"
-export LLM_BASE_URL=https://api.openai.com/v1   # 兼容其他 OpenAI 格式服务
-export LLM_MODEL=gpt-4o-mini
-python run_pipeline.py --target <your-project>/src --slither slither_raw.json --analyze --limit 5
+# 2. 合并源码与告警，生成分析单元
+python src\build_input.py --scan build\scan.json
+
+# 3. 先看提示词长什么样，不发请求
+python src\analyze.py --input build\analysis_input.json --dry-run --limit 3
+
+# 4. 真调 LLM（先设环境变量，见下）
+python src\analyze.py --input build\analysis_input.json
+
+# 5. 算对比指标
+python eval\run_eval.py
 ```
+
+环境变量三件套（DeepSeek 为例，PowerShell 里设一次即可）：
+
+```powershell
+setx LLM_API_KEY "sk-xxx"
+setx LLM_BASE_URL "https://api.deepseek.com/v1"
+setx LLM_MODEL "deepseek-chat"
+```
+
+`LLM_BASE_URL` 只要兼容 OpenAI 格式就能换其他服务商。
 
 Slither 原始输出这样产生：
 
 ```bash
 slither . --json slither_raw.json
 ```
+
+## 实测结果（staking 样本，2026-11-10）
+
+| 阶段 | 结果 |
+|---|---|
+| 扫描 | 4 文件 / 4 合约 / 21 函数 / 15 个对外函数 |
+| 分析单元 | 15 个 |
+| LLM 假设 | 15 条（13 条有内容，2 条空输出） |
+| 人工复核成立 | 4 条 |
+| 误报 | 9 条 |
+| 全量精确率 | 4 / 13 ≈ 30.8% |
+| 基线（Slither）检出 | 1 / 5 个已知问题（20%） |
+| LLM 新增检出 | 2 / 5（owner 增发、凭证资格实时判定） |
+| 两边都漏 | 2 / 5（空池预算沉淀、段数增长 gas） |
+
+**结论**：Slither 擅长精度类模式匹配，业务语义问题（权限设计、记账资格）它看不到；LLM 能补上一部分，但误报率高，必须人工逐条裁决。
 
 ## 产物
 
@@ -72,6 +103,8 @@ slither . --json slither_raw.json
 - LLM 输出可能行号越界，必须人工核对
 - 评估集需要自己准备案例，工具不内置漏洞样本
 - 不做自动修复，不生成报告正文，只产出结构化线索
+- **实测误报率 69.2%**（13 条假设里 9 条不成立），所以每条都必须人工复核，不能直接当结论用
+- LLM 只看单个函数，跨函数的约束看不到，典型的误报来源就是"校验写在别的函数里"
 
 ## 目录
 

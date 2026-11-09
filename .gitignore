@@ -4,5 +4,3 @@ __pycache__/
 .env
 build/
 slither_raw.json
-review/review.md
-eval/eval_result.md

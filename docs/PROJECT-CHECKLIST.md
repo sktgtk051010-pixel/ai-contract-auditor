@@ -68,10 +68,40 @@ ai-contract-auditor/
 | 7 | 提示词模板改成中文 | dry-run 验证，占位符替换正常 | ✅ |
 | 8 | 两个教学文档 | `docs/PYTHON-101.md`、`docs/WALKTHROUGH.md` | ✅ |
 | 9 | `convert_slither.py` 代码写完 | 但**没跑过真实 Slither 输出**，逻辑未经实战验证 | ⚠️ 未验证 |
+| 10 | 用 staking 作样本跑通扫描 | `files=4 contracts=4 functions=21 external=15 low_level=0` | ✅ |
+| 11 | 生成分析单元 | `units=15 alerts_assigned=0` | ✅ |
+| 12 | DeepSeek 真调全量 15 条 | `findings=15 failed=0` | ✅ |
+| 13 | 人工逐条复核 | `review/review.md`：4 条成立、9 条误报、精确率 30.8% | ✅ |
+| 14 | 评估跑出真实数字 | `eval/eval_result.md`：基线 1/5、LLM 新增 2/5、两边都漏 2 | ✅ |
+| 15 | 修评估脚本的布尔判断 bug | `"no"` 字符串被当成真值，已改成 `is_yes()` | ✅ |
 
 ---
 
-## 四、要你自己做的事（⬜ 按顺序，别跳）
+## 四、操作步骤（先看状态总览）
+
+| 步骤 | 状态 | 说明 |
+|---|---|---|
+| 1 装 Slither | ⬜ 未做 | 可选：staking 的报告里已有 17 条 Slither 结果 |
+| 2 生成 Slither JSON | ⬜ 未做 | 同上 |
+| 3 归一化 | ⬜ 未做 | ⚠️ `convert_slither.py` 仍未用真实输出验证过 |
+| 4 跑流水线 | ✅ 已做 | staking：`units=15` |
+| 5 拿 API key | ✅ 已做 | DeepSeek |
+| 6 真调 | ✅ 已做 | 15 条全部成功 |
+| 7 人工复核 | ✅ 已做 | 4 条成立、9 条误报 |
+| 8 Foundry 测试 | ⬜ 未做 | 可选加分项 |
+| 9 填评估表 | ✅ 已做 | 基线 1/5、LLM 新增 2/5 |
+| 10 推 GitHub | ⬜ 未做 | **唯一必须做的收尾** |
+
+下面各节保留原始操作说明。已完成的可以当参考，未完成的照着做。
+
+**样本已从 vault 改为 staking。** 涉及 Slither 的命令要把目录换成 `staking`：
+
+```bash
+cd /mnt/d/Solidity-Projects/staking
+slither . --filter-paths "lib/" --exclude-dependencies --json /mnt/d/Solidity-Projects/ai-contract-auditor/slither_raw.json
+```
+
+**注意**：Slither 会往被测项目里写 `crytic-export/`、`cache/` 等产物。如果不想让 staking 出现任何新文件，就在副本目录里跑，别在原目录跑。
 
 ### ⬜ 1. 在 WSL 里装 Slither（15 分钟）
 

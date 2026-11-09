@@ -43,7 +43,7 @@
 ### 你在这一步要做什么
 
 ```powershell
-python src\scan.py --target "你的项目\src" --out build\scan.json
+python3 src\scan.py --target "你的项目\src" --out build\scan.json
 ```
 
 看终端输出的那行数字：

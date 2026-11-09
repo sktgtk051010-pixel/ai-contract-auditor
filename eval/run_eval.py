@@ -40,10 +40,10 @@ def summarize(rows, label):
     flagged = sum(1 for r in rows if is_yes(r["llm_flagged"]))
 
     # LLM 提出且复核成立
-    confirmed = sum(1 for r in rows if r["llm_flagged"] and is_yes(r["human_confirmed"]))
+    confirmed = sum(1 for r in rows if is_yes(r["llm_flagged"]) and is_yes(r["human_confirmed"]))
 
     # LLM 补上了基线没发现的问题
-    llm_extra = sum(1 for r in rows if r["llm_flagged"] and not is_yes(r["slither_detected"]))
+    llm_extra = sum(1 for r in rows if is_yes(r["llm_flagged"]) and not is_yes(r["slither_detected"]))
 
     # 两边都没发现 = 漏报
     missed = sum(
@@ -93,8 +93,15 @@ def main():
     args = parser.parse_args()
 
     rows = load_cases(args.cases)
-    # 还没填的行先挑出来，统计时排除
-    pending = [r["case_id"] for r in rows if is_pending(r, "slither_detected")]
+    # 任意一列没填就算这条还没准备好，统计时排除
+    pending = [
+        r["case_id"]
+        for r in rows
+        if any(
+            is_pending(r, field)
+            for field in ("slither_detected", "llm_flagged", "human_confirmed")
+        )
+    ]
 
     results = []
     # 调试集和评估集分开算，避免调参污染最终结论
