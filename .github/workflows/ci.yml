@@ -1,0 +1,55 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 1. 所有脚本能通过字节码编译，语法错误直接暴露
+      - name: Syntax check
+        run: python -m compileall -q src eval run_pipeline.py
+
+      # 2. 入口脚本能完成 import 并打印帮助，不只是语法对
+      - name: Entrypoint loads
+        run: python run_pipeline.py --help > /dev/null
+
+      # 3. 仓库里的 JSON 都能被解析（schema、提示词配置）
+      - name: Validate JSON
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          files = sorted(Path(".").rglob("*.json"))
+          for f in files:
+              json.loads(f.read_text(encoding="utf-8"))
+          print(f"{len(files)} json files ok")
+          PY
+
+      # 4. 提示词模板和 schema 不能是空文件
+      - name: Prompt and schema non-empty
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ("prompts/risk_analysis.md", "schema/finding.schema.json"):
+              assert Path(name).stat().st_size > 0, name
+          print("ok")
+          PY
+
+      # 5. eval_result.md 必须等于脚本从 cases.csv 算出来的结果：
+      #    改了案例表却忘了重跑脚本，这一步会失败
+      - name: Eval table matches script output
+        run: |
+          python eval/run_eval.py
+          git diff --exit-code eval/eval_result.md

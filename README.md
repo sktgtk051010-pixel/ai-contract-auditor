@@ -1,5 +1,7 @@
 # ai-contract-auditor
 
+[![ci](https://github.com/sktgtk051010-pixel/ai-contract-auditor/actions/workflows/ci.yml/badge.svg)](https://github.com/sktgtk051010-pixel/ai-contract-auditor/actions/workflows/ci.yml)
+
 Python + Slither + LLM 的智能合约审计辅助工具：扫描源码结构、归并静态分析告警、生成风险假设，再由人工复核并用 Foundry 测试验证。
 
 LLM 只负责提假设，不下结论。每条假设的状态由人裁决。
